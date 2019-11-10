@@ -7,6 +7,8 @@ package ja;
 
 public class SubText extends Test{
 
+
+
     @Override
     public void testExtends(){
         System.out.println("Subtest");
