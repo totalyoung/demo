@@ -1,20 +1,23 @@
 package ja.Concurrency.ThreadLocalDemo;
 
+import com.sun.jmx.snmp.ThreadContext;
 import ja.Concurrency.proxy.YellowPerson;
 import ja.Concurrency.ThreadLocalDemo.Entity;
 
 public class CloseThread implements Runnable {
 
 	private static int index = 0;
-	private static Entity entity = new Entity("123","yangst");
+	private static Entity entity2 = new Entity("123","yangst");
+
 	private static ThreadLocal<Entity> entityHolder = new ThreadLocal<Entity>() {
 		@Override
 		// 首次调用get方法，就会调用initialValue来获得初始值
 		protected Entity initialValue() {
-			super.initialValue();
-			return entity;
+//			super.initialValue();
+			return new Entity("123","yangst");
 		}
 	};
+
 
 	private static YellowPerson person = new YellowPerson();
 	private static ThreadLocal<YellowPerson> personHolder = new ThreadLocal<YellowPerson>() {
@@ -37,10 +40,18 @@ public class CloseThread implements Runnable {
 
 	@Override
 	public void run() {
-		Entity entity = getEntity();
+
+//		Entity entity = getEntity();
+		Entity entity =entity2;
 		entity.setName(Thread.currentThread().getName());
 		for (int i = 0; i < 5; i++) {
+			entity.setPhone(i+"");
 			System.out.println(entity);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 //			System.out.println("index : " + index++);
 		}
 	}
@@ -49,7 +60,7 @@ public class CloseThread implements Runnable {
 		Thread thread = new Thread(new CloseThread());
 		Thread thread2 = new Thread(new CloseThread());
 		thread.start();
-		Thread.sleep(1000);
+//		Thread.sleep(1000);
 		thread2.start();
 	}
 
