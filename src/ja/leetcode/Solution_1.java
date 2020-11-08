@@ -1368,63 +1368,108 @@ public class Solution_1 {
             return root;
         }
         TreeNode temp = root;
-        for(;;){
-            if(temp.val>=num){
-                if(temp.right==null){
-                    temp.right = new TreeNode(num);
-                    break;
-                }else{
-                    return IntoTree(temp.right,num);
-                }
-            }else{
-                if(temp.left==null){
-                    temp.left =  new TreeNode(num);
-                    break;
-                }else{
-                    return IntoTree(temp.left,num);
-                }
-            }
-        }
+//        for(;;){
+//            if(temp.val>=num){
+//                if(temp.right==null){
+//                    temp.right = new TreeNode(num);
+//                    break;
+//                }else{
+//                    return IntoTree(temp.right,num);
+//                }
+//            }else{
+//                if(temp.left==null){
+//                    temp.left =  new TreeNode(num);
+//                    break;
+//                }else{
+//                    return IntoTree(temp.left,num);
+//                }
+//            }
+//        }
         return root;
     }
 
+    /**
+     * 请编写一个函数，使其可以删除某个链表中给定的（非末尾）节点。传入函数的唯一参数为 要被删除的节点 。
+     *
+     *  
+     *
+     * 现有一个链表 -- head = [4,5,1,9]，它可以表示为:
+     *
+     *
+     *
+     *  
+     *
+     * 示例 1：
+     *
+     * 输入：head = [4,5,1,9], node = 5
+     * 输出：[4,1,9]
+     * 解释：给定你链表中值为 5 的第二个节点，那么在调用了你的函数之后，该链表应变为 4 -> 1 -> 9.
+     * 示例 2：
+     *
+     * 输入：head = [4,5,1,9], node = 1
+     * 输出：[4,5,9]
+     * 解释：给定你链表中值为 1 的第三个节点，那么在调用了你的函数之后，该链表应变为 4 -> 5 -> 9.
+     *  
+     *
+     * 提示：
+     *
+     * 链表至少包含两个节点。
+     * 链表中所有节点的值都是唯一的。
+     * 给定的节点为非末尾节点并且一定是链表中的一个有效节点。
+     * 不要从你的函数中返回任何结果。
+     *
+     * @param node
+     */
+    public void deleteNode(DeleteNode.ListNode node) {
+        node.val = node.next.val;
+        node.next = node.next.next;
+    }
+
+    /**
+     * 给你一个单链表的引用结点 head。链表中每个结点的值不是 0 就是 1。已知此链表是一个整数数字的二进制表示形式。
+     *
+     * 请你返回该链表所表示数字的 十进制值 。
+     *
+     * 输入：head = [1,0,1]
+     * 输出：5
+     * 解释：二进制数 (101) 转化为十进制数 (5)
+     * 示例 2：
+     *
+     * 输入：head = [0]
+     * 输出：0
+     * 示例 3：
+     *
+     * 输入：head = [1]
+     * 输出：1
+     * 示例 4：
+     *
+     * 输入：head = [1,0,0,1,0,0,1,1,1,0,0,0,0,0,0]
+     * 输出：18880
+     * 示例 5：
+     *
+     * 输入：head = [0,0]
+     * 输出：0
+     *  
+     *
+     * 提示：
+     *
+     * 链表不为空。
+     * 链表的结点总数不超过 30。
+     * 每个结点的值不是 0 就是 1。
+     *
+     * @param head
+     * @return
+     */
+    public int getDecimalValue(ListNode head) {
+        int sum=0;
+        while(head!=null){
+            sum = sum*2+head.val;
+            head=head.next;
+        }
+        return sum;
+    }
+
     public static void main(String[] args) {
-//        System.out.println(longestCommonPrefix(new String[]{"flower","flow","flight"}));
-//        System.out.println(longestCommonPrefix(new String[]{"c","cc","ccc"}));
-//        System.out.println(longestCommonPrefix(new String[]{"aca","cba"}));
-//        System.out.println("abcde".substring(0,6));
-//        Solution_1.Stack stack = new Solution_1().new Stack();
-//        stack.add('a');
-//        stack.add('b');
-//        stack.add('c');
-//        stack.add('d');
-//        stack.prin();
-//        removeElement(new int[]{1,1,1,1,1},0);
-//        System.out.println(searchInsert(new int[]{1,3,5},3));
-//        System.out.println(maxSubArray(new int[]{-2,1,-3,4,-1,2,1,-5,4}));
-//        System.out.println(maxSubArray(new int[]{-1,1,2,1}));
-//        System.out.println(maxSubArray(new int[]{3,-2,-3,-3,1,3,0}));
-//        System.out.println(maxSubArray(new int[]{2,-3,1,3,-3,2,2,1}));
-//        System.out.println(maxSubArray(new int[]{8,-2,-4,-1,-8,3,8,8,3,4,2,-9,-1,-3,-6,8,-3,9}));
-//        System.out.println(lengthOfLastWord("Hello World"));
-//        System.out.println(lengthOfLastWord("Hello World "));
-//        System.out.println(lengthOfLastWord(" "));
-//        System.out.println(lengthOfLastWord("a "));
-//        String str = "asdfasd";
-//        str.substring()
-//        str.split()
-//        []
-//        System.out.println(addBinary("1010","1"));
-//        deleteDuplicates(createListNode(new int[]{}));
-//        deleteDuplicates(createListNode(new int[]{1,1,2,3,3}));
-//        testlevelOrderBottom();
-        testSortedArrayToBST();
-        int[] a = {5,4,6,}
-//        testMaxDepth();
-//        System.out.println(1 ==0 ? true:false);
-
-
-
 
     }
 
