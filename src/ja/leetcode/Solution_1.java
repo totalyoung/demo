@@ -1336,7 +1336,6 @@ public class Solution_1 {
         if(nums ==null || nums.length==0) return null;
         return sortedArrayToBST(new TreeNode(nums[((nums.length-1)/2)]),nums,0,nums.length-1);
 
-
     }
 
     public static TreeNode sortedArrayToBST(TreeNode root,int[] nums,int start,int end){
@@ -1360,6 +1359,33 @@ public class Solution_1 {
     public static void testSortedArrayToBST(){
         TreeNode treeNode = sortedArrayToBST(new int[]{0,1,2,3,4,5});
         System.out.println(levelOrderBottom(treeNode));
+    }
+
+
+    public TreeNode IntoTree(TreeNode root,int num,int leftH,int rightH){
+        if(root ==null){
+            root = new TreeNode(num);
+            return root;
+        }
+        TreeNode temp = root;
+        for(;;){
+            if(temp.val>=num){
+                if(temp.right==null){
+                    temp.right = new TreeNode(num);
+                    break;
+                }else{
+                    return IntoTree(temp.right,num);
+                }
+            }else{
+                if(temp.left==null){
+                    temp.left =  new TreeNode(num);
+                    break;
+                }else{
+                    return IntoTree(temp.left,num);
+                }
+            }
+        }
+        return root;
     }
 
     public static void main(String[] args) {
@@ -1393,6 +1419,7 @@ public class Solution_1 {
 //        deleteDuplicates(createListNode(new int[]{1,1,2,3,3}));
 //        testlevelOrderBottom();
         testSortedArrayToBST();
+        int[] a = {5,4,6,}
 //        testMaxDepth();
 //        System.out.println(1 ==0 ? true:false);
 
