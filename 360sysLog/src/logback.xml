@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    　　　　　
+    <configuration>
+        <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+            <file>../weblogs/g360.log</file>
+            <!-- 设置prudent为true，file必须为空 -->
+            <!--<file>logFile.log</file>-->
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <!-- 每天翻滚 -->
+                <fileNamePattern>../weblogs/g360.%d{yyyyMMdd}.%i.log</fileNamePattern>
+
+                <!-- 保留30天，并最大归档文件为3G -->
+                <maxHistory>30</maxHistory>
+            </rollingPolicy>
+            <!--<encoder>-->
+                <!--<pattern>%msg%n</pattern>-->
+            <!--</encoder>-->
+            <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+                <layout class="server.MySampleLayout" />
+            </encoder>
+        </appender>
+        <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+                <layout class="server.MySampleLayout" />
+            </encoder>
+            <!--<encoder>-->
+                <!--<pattern>%msg%n</pattern>-->
+            <!--</encoder>-->
+        </appender>
+
+        <logger name="server.SysLogServlet" level="INFO" />
+
+        <root level="DEBUG">
+            <!--<appender-ref ref="FILE"/>-->
+            <appender-ref ref="STDOUT"/>
+        </root>
+    </configuration>
+
+</configuration>
