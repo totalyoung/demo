@@ -1,5 +1,8 @@
 package ja.java8;
 
+
+import org.junit.jupiter.api.Test;
+
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -43,9 +46,10 @@ public class CollectorDemo {
         StreamDemo.menu.stream().map(Dish::getName).collect(joining(","));
     }
 
+    @Test
     public static void testGroupingBy() {
         System.out.println(StreamDemo.menu.stream().collect(groupingBy(Dish::getType, maxBy(Comparator.comparingInt(Dish::getCalories)))));
-//        System.out.println(StreamDemo.menu.stream().collect(groupingBy(Dish::getType,mapping()));
+//        System.out.println(StreamDemo.menu.stream().collect(groupingBy(Dish::getType,mapping())));
     }
 
     public static void testTypesCount() {
@@ -89,6 +93,8 @@ public class CollectorDemo {
 
 
     public static void main(String[] args) {
+        testToMap();
+        testCollectingAndThen();
         testSummarizingInt();
         LinkedList<Integer> list  = new LinkedList<Integer>();
 list.spliterator();
