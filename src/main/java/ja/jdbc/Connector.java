@@ -3,11 +3,10 @@ package ja.jdbc;
 import org.apache.commons.lang3.RandomUtils;
 
 import java.sql.*;
-import java.util.Random;
 
 public class Connector {
     public static void main(String[] args) throws Exception {
-        testDeadLock();
+        testAutoCommit();
 
     }
 
@@ -45,8 +44,10 @@ public class Connector {
             int transactionIsolation = conn.getTransactionIsolation();
             System.out.println(Thread.currentThread().getId()+" "+transactionIsolation);
             PreparedStatement preparedStatement = conn.prepareStatement(str);
-            preparedStatement.addBatch(str );
+
+//            preparedStatement.addBatch(str );
 //            int execute = preparedStatement.executeUpdate();
+            ResultSet resultSet = preparedStatement.executeQuery();
             boolean execute = preparedStatement.execute();
             System.out.println(Thread.currentThread().getId()+" execute "+execute);
             Thread.sleep(5000L);

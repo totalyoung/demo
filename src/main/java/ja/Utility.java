@@ -1,7 +1,5 @@
 package ja;
 
-import static com.sun.xml.internal.fastinfoset.util.ValueArray.MAXIMUM_CAPACITY;
-
 /**
  * Created by totalyoung on 2018/10/24.
  */
@@ -33,7 +31,7 @@ public class Utility {
         n |= n >>> 4;
         n |= n >>> 8;
         n |= n >>> 16;
-        n = (n < 0) ? 1 : (n >= MAXIMUM_CAPACITY) ? MAXIMUM_CAPACITY : n + 1;
+        n = (n < 0) ? 1 : (n >= Integer.MAX_VALUE) ? Integer.MAX_VALUE : n + 1;
         System.out.println(n);
     }
 

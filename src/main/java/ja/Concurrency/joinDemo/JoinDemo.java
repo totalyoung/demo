@@ -5,6 +5,11 @@ public class JoinDemo {
     static class JoinThread implements Runnable{
         @Override
         public void run() {
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             for (;i<1000;i++);
         }
     }
