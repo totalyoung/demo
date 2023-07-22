@@ -15,6 +15,9 @@ public class DemoConsumer {
 //        referenceConfig.setProtocol(ConfigInstance.getProtocol().getName());
 //        referenceConfig.setLoadbalance("");
         referenceConfig.setTimeout(1000000);
+
+//        referenceConfig.setConnections();
+        
         DemoService userService = referenceConfig.get();
         System.out.println("启动成功");
         return userService;

@@ -13,42 +13,44 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package netty.server;
+package netty.gateway;
 
 import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
-import io.netty.handler.codec.http.multipart.*;
+import io.netty.handler.codec.http.multipart.HttpPostRequestDecoder;
 import io.netty.util.CharsetUtil;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static io.netty.buffer.Unpooled.copiedBuffer;
 
-public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class ProxyServerHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
-    private static final Logger logger = Logger.getLogger(HttpServerHandler.class.getName());
+    private static final Logger logger = Logger.getLogger(ProxyServerHandler.class.getName());
 
     private HttpRequest request;
 
     private final StringBuilder responseContent = new StringBuilder();
 
-    private StringHttpRequest completeHttpRequest;
-
-    private static final HttpDataFactory factory =
-            new DefaultHttpDataFactory(DefaultHttpDataFactory.MINSIZE); // Disk if size exceed
-
     private HttpPostRequestDecoder decoder;
 
-
     ExecutorService executorService = new ThreadPoolExecutor(1, 12, 1, TimeUnit.SECONDS,new LinkedBlockingQueue<>());
+
+    private EndpointManager endpointManager;
+
+    private Endpoint endpoint;
+
+    public ProxyServerHandler(EndpointManager endpointManager) {
+//        super();
+        this.endpointManager = endpointManager;
+    }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
@@ -56,6 +58,9 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 //            decoder.cleanFiles();
 //        }
         System.out.println("连接断开"+"id:"+ctx.channel().id());
+        if(endpoint != null){
+            endpoint.remoteClose();
+        }
 //        super.channelInactive(ctx);
     }
 
@@ -67,58 +72,22 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
     }
 
     @Override
-    public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
-        System.out.println("注册:"+System.currentTimeMillis()+"id:"+ctx.channel().id());
-        super.channelRegistered(ctx);
-    }
-
-    @Override
     public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
         this.request = msg;
-        Map<String, List<String>> parameters = new LinkedHashMap<>();
         URI uri = new URI(msg.uri());
         String path = uri.getPath();
-        //解析param
-        QueryStringDecoder queryStringDecoder = new QueryStringDecoder(uri.toString());
-        Map<String, List<String>>  queryParameters = queryStringDecoder.parameters();
-        parameters.putAll(queryParameters);
-
-        //解析header
-        HttpHeaders headers = msg.headers();
-        String contentType = headers.get(HttpHeaders.Names.CONTENT_TYPE).trim();
-        String bodyString="";
-        if(isStringType(contentType)){
-            ByteBuf content = msg.content();
-            byte[] bytes = new byte[content.readableBytes()];
-            content.readBytes(bytes);
-            bodyString = new String(bytes);
-            QueryStringDecoder formDataDecoder = new QueryStringDecoder(bodyString,false);
-            parameters.putAll(formDataDecoder.parameters());
-        }
-        StringHttpRequest completeHttpRequest = new StringHttpRequest(parameters, bodyString, msg.headers(),path);
-        HandlerTask handlerTask = new HandlerTask(completeHttpRequest);
-        Future<HandlerResult> submit = executorService.submit(handlerTask);
-        HandlerResult handlerResult = submit.get();
-        //处理结果集
-        Object result = handlerResult.result();
-        ByteBuf byteBuf = Unpooled.copiedBuffer(result.toString(), CharsetUtil.UTF_8);
-        DefaultFullHttpResponse response = new DefaultFullHttpResponse(msg.protocolVersion(), HttpResponseStatus.OK, byteBuf);
-
-        //合并响应头
-        HttpHeaders resultHeader = handlerResult.headers();
-        response.headers().add(resultHeader);
-
-        // 解析attr
-        // 解析文件
-        writeResponse(ctx.channel());
+        String[] split = path.split("/");
+        String s = split[1];
+        endpoint = endpointManager.getEndpoint(s);
+        Channel serverChannel = endpoint.connect(ctx.channel());
+        msg.retain();
+//        DefaultFullHttpRequest defaultFullHttpRequest =  new DefaultFullHttpRequest(msg.protocolVersion(),msg.method(),msg.uri(), Unpooled.EMPTY_BUFFER,msg.headers(),msg.trailingHeaders());
+        ChannelFuture channelFuture = serverChannel.writeAndFlush(msg);
+        boolean success = channelFuture.isSuccess();
+        System.out.println();
     }
 
-    public boolean isStringType(String contentType){
-        if(HttpHeaders.Values.APPLICATION_X_WWW_FORM_URLENCODED.equals(contentType)){
-            return true;
-        }
-        return false;
-    }
+
 
 
     private void reset() {
@@ -175,11 +144,6 @@ public class HttpServerHandler extends SimpleChannelInboundHandler<FullHttpReque
 //            for (Cookie cookie : cookies) {
 //                response.headers().add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.STRICT.encode(cookie));
 //            }
-//        }
-//        try {
-//            Thread.sleep(3000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
 //        }
         // Write the response.
         ChannelFuture future = channel.writeAndFlush(response);

@@ -1,8 +1,6 @@
 package ja.Concurrency.ThreadLocalDemo;
 
-import com.sun.jmx.snmp.ThreadContext;
 import ja.Concurrency.proxy.YellowPerson;
-import ja.Concurrency.ThreadLocalDemo.Entity;
 
 public class CloseThread implements Runnable {
 
@@ -41,8 +39,8 @@ public class CloseThread implements Runnable {
 	@Override
 	public void run() {
 
-//		Entity entity = getEntity();
-		Entity entity =entity2;
+		Entity entity = getEntity();
+//		Entity entity =entity2;
 		entity.setName(Thread.currentThread().getName());
 		for (int i = 0; i < 5; i++) {
 			entity.setPhone(i+"");

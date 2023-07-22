@@ -1,5 +1,4 @@
-import java.io.*;
-import java.math.BigInteger;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -380,9 +379,14 @@ public class test {
 //        BigInteger bigint=new BigInteger(String.valueOf(0xFFFFFFFF), 16);
 //        int numb=bigint.intValue();
 //        System.out.println(numb);
-        System.out.println(testTry());
-
-
+//        System.out.println(testTry());
+        long l = System.currentTimeMillis();
+        int sum =0;
+        for (int i = 0; i <10000000 ; i++) {
+            sum++;
+//            System.out.println(sum);
+        }
+        System.out.println(System.currentTimeMillis()-l);
     }
 
 }

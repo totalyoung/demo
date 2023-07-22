@@ -2,23 +2,9 @@ package ja.java8;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Random;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -39,6 +25,8 @@ public class CollectionDemo {
 
     @Test
     public void test(){
+        Arrays.stream(dishes).map(e->{e.setCalories(100);return e;}).forEach(System.out::println);
+        Arrays.stream(dishes).forEach(System.out::println);
     }
     public static void main(String[] args) {
 //        Map<Integer,Integer> map = new HashMap<>();
@@ -160,15 +148,6 @@ public class CollectionDemo {
             //主动匹配成功
             //下发结果
         }
-
-        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(10, 20, 60, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>());
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        };
-        Future<?> submit = threadPool.submit(runnable);
 
 
     }

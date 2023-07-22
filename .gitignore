@@ -6,3 +6,4 @@ out/
 com/
 aa
 target/
+*.hprof

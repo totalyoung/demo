@@ -1,10 +1,10 @@
 package ja.leetcode;
 
 import ja.leetcode.annotation.Title;
+import org.apache.commons.collections4.CollectionUtils;
+import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Solution_2 {
 
@@ -104,9 +104,70 @@ public class Solution_2 {
         return ans;
     }
 
+    @Title(title="买卖股票的最佳时机",num="121",tags={"数组"})
+    public static int maxProfit(int[] prices) {
+        if(prices.length <= 1)
+            return 0;
+        int min = prices[0], max = 0;
+        for(int i = 1; i < prices.length; i++) {
+            max = Math.max(max, prices[i] - min);
+            min = Math.min(min, prices[i]);
+        }
+        return max;
+    }
+
+    public boolean wordBreak(String s, List<String> wordDict) {
+        if(wordDict.isEmpty()) return false;
+        String str = s;
+        for (int i = 0; i < wordDict.size(); i++) {
+            List<String> subList = wordDict.subList(i, wordDict.size());
+            for (String s1 : subList) {
+                str = str.replace(s1, "");
+            }
+            if(str.length()==0){
+                return  true;
+            }
+            str = s;
+
+        }
+        return false;
+    }
+
+    @Test
+    public void testWordBreak(){
+        String s = "cbca";
+        List<String> strings = Arrays.asList(new String[]{"bc", "ca"});
+        wordBreak(s,strings);
+    }
+
+
+    public List<String> generateParenthesis(int n) {
+        if(n==1) return Arrays.asList("()");
+        List<String> strings = generateParenthesis(n - 1);
+        Set<String> result = new HashSet<>();
+        for (String s : strings) {
+            result.add("()"+s);
+            result.add("("+ s +")");
+            result.add( s +"()");
+        }
+        return new LinkedList<>(result);
+    }
+
+    @Test
+    public void testGenerateParenthesis(){
+        List<String> list = generateParenthesis(4);
+        List<String> strings = Arrays.asList("(((())))","((()()))","((())())","((()))()","(()(()))","(()()())","(()())()","(())(())","(())()()","()((()))","()(()())","()(())()","()()(())","()()()()");
+        Collection<String> subtract = CollectionUtils.subtract(strings,list );
+        System.out.println(subtract);
+        System.out.println(list);
+
+    }
+
 
     public static void main(String[] args) {
         int[] ints = new int[]{87,68,91,86,58,63,43,98,6,40};
         System.out.println(maximumDifference(ints));
+
+
     }
 }

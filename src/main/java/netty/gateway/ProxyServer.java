@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package netty.server;
+package netty.gateway;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -25,17 +25,17 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import netty.gateway.Constants;
+import netty.gateway.register.ProxyRegister;
+import netty.gateway.register.Register;
 
 /**
- * An HTTP server showing how to use the HTTP multipart package for file uploads and decoding post data.
+ *
  */
-public final class HttpServer {
+public final class ProxyServer {
 
-//    static final boolean SSL = System.getProperty("ssl") != null;
-    static final boolean SSL = false;
-//    static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "8443" : "8080"));
-    static final int PORT = SSL? 8433 : Constants.SERVER_PORT;
+    static final boolean SSL = System.getProperty("ssl") != null;
+    static final int PORT = Integer.parseInt(System.getProperty("port", SSL? "443" : "80"));
+
 
     public static void main(String[] args) throws Exception {
         // Configure SSL.
@@ -46,7 +46,8 @@ public final class HttpServer {
         } else {
             sslCtx = null;
         }
-
+        Register register = new ProxyRegister(Constants.ZK_HOST);
+        EndpointManager endpointManager = new EndpointManager(register);
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -55,7 +56,7 @@ public final class HttpServer {
             b.group(bossGroup, workerGroup);
             b.channel(NioServerSocketChannel.class);
             b.handler(new LoggingHandler(LogLevel.INFO));
-            b.childHandler(new HttpServerInitializer(sslCtx));
+            b.childHandler(new ProxyServerInitializer(sslCtx,endpointManager));
 //            b.option()
 //            b.childOption(ChannelOption.MAX_MESSAGES_PER_READ,1);
 //            b.childOption()

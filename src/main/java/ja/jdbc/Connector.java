@@ -11,7 +11,6 @@ public class Connector {
     }
 
     public static void testAutoCommit()throws Exception{
-        Class.forName("com.mysql.jdbc.Driver");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -30,9 +29,11 @@ public class Connector {
         }).start();
     }
 
-    public static void autoCommit(String str) {
+    public static void autoCommit(String str)  {
+
         Connection conn = null;
         try {
+            Class.forName("com.mysql.jdbc.Driver");
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/micromall?useUnicode=true&characterEncoding=UTF-8" +
     //                "&roundRobinLoadBalance=true&readFromMasterWhenNoSlaves=true" +
                     "&password=Totalyoung2@&user=root",null);
@@ -54,6 +55,11 @@ public class Connector {
             conn.commit();
             System.out.println(Thread.currentThread().getId()+" commit");
         } catch (Exception e) {
+            try {
+                conn.rollback();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
             e.printStackTrace();
         }finally {
             try {

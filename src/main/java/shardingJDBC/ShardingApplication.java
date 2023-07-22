@@ -20,8 +20,8 @@ public class ShardingApplication {
 
     public static void main(String[] args) throws Exception {
         ShardingApplication application = new ShardingApplication();
-        application.testOnlyShardingTable();
-//        test();
+//        application.testOnlyShardingTable();
+        application.test();
     }
 
     public  void test() throws SQLException {
@@ -130,6 +130,11 @@ public class ShardingApplication {
     }
 
     public DataSource createDataSource(String name){
+//        try {
+//            Class.forName("com.mysql.jdbc.Driver");
+//        } catch (ClassNotFoundException e) {
+//            e.printStackTrace();
+//        }
         BasicDataSource dataSource1 = new BasicDataSource();
         dataSource1.setDriverClassName("com.mysql.jdbc.Driver");
         dataSource1.setUrl("jdbc:mysql://localhost:3306/"+name);

@@ -13,7 +13,7 @@
  * License for the specific language governing permissions and limitations
  * under the License.
  */
-package netty.server;
+package netty.gateway;
 
 import io.netty.channel.AdaptiveRecvByteBufAllocator;
 import io.netty.channel.ChannelInitializer;
@@ -24,16 +24,20 @@ import io.netty.handler.ssl.SslContext;
 
 import java.math.BigDecimal;
 
-public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
+public class ProxyServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SslContext sslCtx;
 
-    public HttpServerInitializer(SslContext sslCtx) {
+    private final EndpointManager endpointManager;
+
+    public ProxyServerInitializer(SslContext sslCtx,EndpointManager endpointManager) {
         this.sslCtx = sslCtx;
+        this.endpointManager = endpointManager;
     }
 
     @Override
     public void initChannel(SocketChannel ch) {
+        //设置每次解析的长度
         ChannelPipeline pipeline = ch.pipeline();
         ch.config().setRecvByteBufAllocator(new AdaptiveRecvByteBufAllocator(1,10,10));
 
@@ -41,14 +45,14 @@ public class HttpServerInitializer extends ChannelInitializer<SocketChannel> {
             pipeline.addLast(sslCtx.newHandler(ch.alloc()));
         }
         pipeline.addLast(new HttpRequestDecoder());
-        pipeline.addLast(new HttpResponseEncoder());
+//        pipeline.addLast(new HttpResponseEncoder());
         pipeline.addLast(new HttpServerKeepAliveHandler());
         pipeline.addLast(new HttpObjectAggregator(512*1024));
 
         // Remove the following line if you don't want automatic content compression.
-        pipeline.addLast(new HttpContentCompressor());
+//        pipeline.addLast(new HttpContentCompressor());
 
-        pipeline.addLast(new HttpServerHandler());
+        pipeline.addLast(new ProxyServerHandler(endpointManager));
 
     }
 
