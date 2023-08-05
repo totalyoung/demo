@@ -20,6 +20,8 @@ public class Endpoint {
 
     private Channel remoteChannel;
 
+
+
     public Endpoint(String host, int port) {
         this.host = host;
         this.port = port;
@@ -42,6 +44,7 @@ public class Endpoint {
                                  ch.pipeline().addLast(new ChannelInboundHandlerAdapter(){
                                      @Override
                                      public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
+                                         System.out.println(msg);
                                          clientChanel.writeAndFlush(msg);
                                      }
                                  });

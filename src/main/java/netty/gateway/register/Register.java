@@ -1,6 +1,8 @@
 package netty.gateway.register;
 
+import com.google.gson.Gson;
 import netty.gateway.Constants;
+import netty.gateway.Metadata;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -43,12 +45,18 @@ public class Register {
 
     public void subscribe(TreeCacheListener listener){}
 
+    public void setMetadata(Metadata data){}
+
 
     public String createNode(String path) {
         return createNode(path, true);
     }
 
     public String createNode(String path, boolean isPersistent){
+        return createNode(path,isPersistent,new Object());
+    }
+
+    public String createNode(String path, boolean isPersistent,Object object){
         try {
             CreateMode createMode  = CreateMode.EPHEMERAL;
             if(isPersistent){
@@ -56,13 +64,33 @@ public class Register {
             }
             Stat stat = client.checkExists().forPath(path);
             if(stat==null){
-                client.create().withMode(createMode).forPath(path);
+                client.create().withMode(createMode).forPath(path,new Gson().toJson(object).getBytes());
             }
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e.getCause());
         }
         return path;
+    }
+
+    public void setNodeData(String path,byte[] bytes){
+        try {
+            Stat stat = client.setData().forPath(path, bytes);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getCause());
+        }
+    }
+
+    public byte[] getNodeData(String path){
+        byte[] bytes;
+        try {
+            bytes = client.getData().forPath(path);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getCause());
+        }
+        return bytes;
     }
 
     public CuratorFramework client(){
@@ -73,7 +101,10 @@ public class Register {
     public static void main(String[] args) {
         Register register = new Register(ZK_HOST);
         register.connect();
+        register.setNodeData("/test/stat","aaa".getBytes());
+        register.getNodeData("/test/stat");
         System.out.println();
+
     }
 
 

@@ -39,6 +39,7 @@ public final class ProxyServer {
 
     public static void main(String[] args) throws Exception {
         // Configure SSL.
+        System.setProperty("java.net.preferIPv4Stack","true");
         final SslContext sslCtx;
         if (SSL) {
             SelfSignedCertificate ssc = new SelfSignedCertificate();
@@ -48,6 +49,7 @@ public final class ProxyServer {
         }
         Register register = new ProxyRegister(Constants.ZK_HOST);
         EndpointManager endpointManager = new EndpointManager(register);
+        endpointManager.start();
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {

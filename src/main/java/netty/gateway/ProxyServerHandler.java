@@ -83,6 +83,7 @@ public class ProxyServerHandler extends SimpleChannelInboundHandler<FullHttpRequ
         msg.retain();
 //        DefaultFullHttpRequest defaultFullHttpRequest =  new DefaultFullHttpRequest(msg.protocolVersion(),msg.method(),msg.uri(), Unpooled.EMPTY_BUFFER,msg.headers(),msg.trailingHeaders());
         ChannelFuture channelFuture = serverChannel.writeAndFlush(msg);
+
         boolean success = channelFuture.isSuccess();
         System.out.println();
     }

@@ -26,6 +26,7 @@ import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
 import netty.gateway.Constants;
+import netty.gateway.register.ServerRegister;
 
 /**
  * An HTTP server showing how to use the HTTP multipart package for file uploads and decoding post data.
@@ -62,7 +63,8 @@ public final class HttpServer {
 //            b.childAttr()
 
             Channel ch = b.bind(PORT).sync().channel();
-
+            ServerRegister serverRegister = new ServerRegister(Constants.ZK_HOST);
+            serverRegister.register();
             System.err.println("Open your web browser and navigate to " +
                     (SSL? "https" : "http") + "://127.0.0.1:" + PORT + '/');
 
