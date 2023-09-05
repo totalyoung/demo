@@ -25,8 +25,8 @@ import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
 import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.SelfSignedCertificate;
-import netty.gateway.register.ProxyRegister;
-import netty.gateway.register.Register;
+import netty.gateway.register.Client;
+import netty.gateway.register.ProxyZKClient;
 
 /**
  *
@@ -47,9 +47,10 @@ public final class ProxyServer {
         } else {
             sslCtx = null;
         }
-        Register register = new ProxyRegister(Constants.ZK_HOST);
-        EndpointManager endpointManager = new EndpointManager(register);
-        endpointManager.start();
+        Client client = new ProxyZKClient(Constants.ZK_HOST);
+        ProviderManager providerManager = new ProviderManager(client);
+//        ProviderManager providerManager = null;
+        providerManager.start();
         EventLoopGroup bossGroup = new NioEventLoopGroup(1);
         EventLoopGroup workerGroup = new NioEventLoopGroup();
         try {
@@ -58,7 +59,7 @@ public final class ProxyServer {
             b.group(bossGroup, workerGroup);
             b.channel(NioServerSocketChannel.class);
             b.handler(new LoggingHandler(LogLevel.INFO));
-            b.childHandler(new ProxyServerInitializer(sslCtx,endpointManager));
+            b.childHandler(new ProxyServerInitializer(sslCtx, providerManager));
 //            b.option()
 //            b.childOption(ChannelOption.MAX_MESSAGES_PER_READ,1);
 //            b.childOption()

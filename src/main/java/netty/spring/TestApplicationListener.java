@@ -2,8 +2,11 @@ package netty.spring;
 
 import netty.common.NetUtil;
 import netty.common.StringUtil;
-import netty.gateway.register.ServerRegister;
+import netty.gateway.Constants;
 import netty.gateway.Metadata;
+import netty.gateway.PrefixPathRoute;
+import netty.gateway.Route;
+import netty.gateway.register.ServerZKClient;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.boot.web.servlet.context.ServletWebServerInitializedEvent;
@@ -13,9 +16,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
-@ConditionalOnProperty(prefix = PeachSpringConstants.PEACH_PREFIX,name = "enabled",havingValue = "true")
+@ConditionalOnProperty(prefix = Constants.PEACH_PREFIX,name = "enabled",havingValue = "true")
 public class TestApplicationListener implements ApplicationListener<ServletWebServerInitializedEvent> {
 
     @Resource
@@ -23,33 +28,42 @@ public class TestApplicationListener implements ApplicationListener<ServletWebSe
 
     @Override
     public void onApplicationEvent(ServletWebServerInitializedEvent event) {
-        String serverName = PeachSpringConstants.DEFAULT;
+        String serverName = Constants.DEFAULT;
         ServletWebServerApplicationContext applicationContext = event.getApplicationContext();
         ConfigurableEnvironment environment = applicationContext.getEnvironment();
         if(StringUtil.hasLength(peachServerProperties.getPath())){
             serverName = peachServerProperties.getPath();
-        }else if (environment.containsProperty("server.servlet.context-path")){
-            serverName = environment.getProperty("server.servlet.context-path");
-        }else if (environment.containsProperty("spring.application.name")){
-            serverName = environment.getProperty("spring.application.name");
         }
+//        else if (environment.containsProperty("server.servlet.context-path")){
+//            targetUrl = serverName;
+//            serverName = environment.getProperty("server.servlet.context-path");
+//        }
+        else if (environment.containsProperty("spring.application.name")){
+            serverName = environment.getProperty("spring.application.name");
+        }else{
+            //TODO throw exception
+        }
+
+        Route route = new PrefixPathRoute(serverName);
 
         if(!StringUtils.hasLength(peachServerProperties.getRegisterHost())){
             //TODO throw exception
         }
 
-        ServerRegister serverRegister = new ServerRegister(peachServerProperties.getRegisterHost());
-        String localHost = NetUtil.localHostStr();
-        serverRegister.createServer(localHost,Integer.parseInt(environment.getProperty("server.port")),serverName);
-        serverRegister.register();
 
-        serverRegister.setMetadata(createMetadata());
+        List<Route> routes = new LinkedList<>();
+        routes.add(route);
+//        serverRegister.setMetadata(createMetadata());
 //        RequestMappingHandlerMapping mapping = applicationContext.getBean(RequestMappingHandlerMapping.class);
 //        Map<RequestMappingInfo, HandlerMethod> methods = mapping.getHandlerMethods();
 //        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : methods.entrySet()) {
 //            RequestMappingInfo key = entry.getKey();
 //        }
 
+        ServerZKClient serverZKClient = new ServerZKClient(peachServerProperties.getRegisterHost(),routes);
+        String localHost = NetUtil.localHostStr();
+        serverZKClient.createServer(localHost,Integer.parseInt(environment.getProperty("server.port")),serverName);
+        serverZKClient.register();
         System.out.println("web Server start!!!!");
     }
 

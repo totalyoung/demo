@@ -28,11 +28,11 @@ public class ProxyServerInitializer extends ChannelInitializer<SocketChannel> {
 
     private final SslContext sslCtx;
 
-    private final EndpointManager endpointManager;
+    private final ProviderManager providerManager;
 
-    public ProxyServerInitializer(SslContext sslCtx,EndpointManager endpointManager) {
+    public ProxyServerInitializer(SslContext sslCtx, ProviderManager providerManager) {
         this.sslCtx = sslCtx;
-        this.endpointManager = endpointManager;
+        this.providerManager = providerManager;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ProxyServerInitializer extends ChannelInitializer<SocketChannel> {
         // Remove the following line if you don't want automatic content compression.
 //        pipeline.addLast(new HttpContentCompressor());
 
-        pipeline.addLast(new ProxyServerHandler(endpointManager));
+        pipeline.addLast(new ProxyServerHandler(providerManager));
 
     }
 

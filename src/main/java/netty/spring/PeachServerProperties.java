@@ -1,8 +1,9 @@
 package netty.spring;
 
+import netty.gateway.Constants;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties(prefix = PeachSpringConstants.PEACH_PREFIX)
+@ConfigurationProperties(prefix = Constants.PEACH_PREFIX)
 public class PeachServerProperties {
 
     private String path;

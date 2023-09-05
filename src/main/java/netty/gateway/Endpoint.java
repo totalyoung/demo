@@ -10,27 +10,24 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.http.HttpRequestEncoder;
 
-public class Endpoint {
+import java.util.Objects;
 
-    private String host;
-
-    private int port;
+public class Endpoint extends Host{
 
     private Channel clientChanel;
 
     private Channel remoteChannel;
 
+//    private EndpointCluster cluster;
 
+    //TODO 健康检查
 
     public Endpoint(String host, int port) {
-        this.host = host;
-        this.port = port;
+       super(host,port);
     }
 
     public Endpoint(String hostStr){
-        String[] split = hostStr.split(":");
-        this.host=split[0];
-        this.port=Integer.valueOf(split[1]);
+        super(hostStr);
     }
 
     public Channel connect(Channel clientChanel){
@@ -65,4 +62,21 @@ public class Endpoint {
         if(remoteChannel.isActive()) remoteChannel.close();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Endpoint endpoint = (Endpoint) o;
+        return port == endpoint.port &&
+                Objects.equals(host, endpoint.host);
+    }
+
+
+    @Override
+    public String toString() {
+        return "Endpoint{" +
+                "host='" + host + '\'' +
+                ", port=" + port +
+                '}';
+    }
 }

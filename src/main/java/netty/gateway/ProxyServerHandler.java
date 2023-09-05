@@ -43,13 +43,13 @@ public class ProxyServerHandler extends SimpleChannelInboundHandler<FullHttpRequ
 
     ExecutorService executorService = new ThreadPoolExecutor(1, 12, 1, TimeUnit.SECONDS,new LinkedBlockingQueue<>());
 
-    private EndpointManager endpointManager;
+    private ProviderManager providerManager;
 
     private Endpoint endpoint;
 
-    public ProxyServerHandler(EndpointManager endpointManager) {
+    public ProxyServerHandler(ProviderManager providerManager) {
 //        super();
-        this.endpointManager = endpointManager;
+        this.providerManager = providerManager;
     }
 
     @Override
@@ -78,9 +78,17 @@ public class ProxyServerHandler extends SimpleChannelInboundHandler<FullHttpRequ
         String path = uri.getPath();
         String[] split = path.split("/");
         String s = split[1];
-        endpoint = endpointManager.getEndpoint(s);
-        Channel serverChannel = endpoint.connect(ctx.channel());
+        //TODO 路由处理
+        //TODO 选择endpoint
+        Provider provider = providerManager.getProvider(s);
+        if (provider == null) {
+            writeResponse(ctx.channel(),true);
+            return;
+        }
+        //
         msg.retain();
+
+        Channel serverChannel = endpoint.connect(ctx.channel());
 //        DefaultFullHttpRequest defaultFullHttpRequest =  new DefaultFullHttpRequest(msg.protocolVersion(),msg.method(),msg.uri(), Unpooled.EMPTY_BUFFER,msg.headers(),msg.trailingHeaders());
         ChannelFuture channelFuture = serverChannel.writeAndFlush(msg);
 

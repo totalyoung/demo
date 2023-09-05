@@ -1,39 +1,50 @@
 package netty.gateway;
 
-public class Constants {
-    public static final String PATH_SEPARATOR = "/";
+public interface Constants {
+    String FORWARD_SLASH = "/";
 
-    public static final String ZK_HOST = "192.168.117.100:2181";
+    String ZK_HOST = "192.168.117.100:2181";
 
-    public static final String PROXY = "proxy";
+    String PROXY = "proxy";
 
-    public static final String SERVER = "server";
+    String PROVIDER = "provider";
 
-    public static final String ENDPOINT = "endpoint";
+    String ENDPOINT = "endpoint";
 
-    public static final String CONFIG = "config";
+    String CONFIG = "config";
 
-    public static final String META = "meta";
+    String META = "meta";
 
-    public static final String PROXY_PATH = PATH_SEPARATOR+PROXY;
+    String PROXY_PATH = FORWARD_SLASH + PROXY;
 
-    public static final String SERVER_PATH = PATH_SEPARATOR+SERVER;
+    String SERVER_PATH = FORWARD_SLASH + PROVIDER;
 
-    public static final String ENDPOINT_PATH = PATH_SEPARATOR+ENDPOINT;
+    String ENDPOINT_PATH = FORWARD_SLASH + ENDPOINT;
 
-    public static final String CONFIG_PATH = PATH_SEPARATOR+CONFIG;
+    String CONFIG_PATH = FORWARD_SLASH + CONFIG;
 
-    public static final String META_PATH = PATH_SEPARATOR+META;
+    String META_PATH = FORWARD_SLASH + META;
 
-    public static final String LOACL_HOST = "127.0.0.1";
+    String LOACL_HOST = "127.0.0.1";
 
-    public static final int SERVER_PORT = 8808;
+    int SERVER_PORT = 8808;
 
-    public static final int SERVER_CHILD_INDEX = 2;
+    int SERVER_CHILD_INDEX = 2;
 
-    public static final int ENDPOINT_CHILD_INDEX = 4;
+    int ENDPOINT_CHILD_INDEX = 4;
 
-    public static final int META_CHILD_INDEX = ENDPOINT_CHILD_INDEX;
+    int META_CHILD_INDEX = ENDPOINT_CHILD_INDEX;
 
+    int HOST_CHILD_INDEX = 5;
+
+    int ROUTE_CHILD_INDEX = 3;
+
+    int PROVIDER_CHILD_INDEX = 1;
+
+    String AMPERSAND = "&";
+
+    String PEACH_PREFIX = "peach";
+
+    String DEFAULT = "default";
 
 }
